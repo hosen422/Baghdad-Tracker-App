@@ -12,26 +12,7 @@ jobs:
     - name: Checkout Cloud Code
       uses: actions/checkout@v4
 
-    - name: Setup Python
-      uses: actions/setup-python@v5
-      with:
-        python-version: '3.11'
-
-    - name: Get Buildozer Cache
-      uses: actions/cache@v4
-      with:
-        path: .buildozer
-        key: ${{ runner.os }}-buildozer-${{ hashFiles('buildozer.spec') }}
-
     - name: Build with Buildozer
       uses: actions-hub/buildozer@master
       with:
-        command: android debug
-        # repository_root
-
-    - name: Upload APK Artifact
-      uses: actions/upload-artifact@v4
-      with:
-        name: AlMandoub-APK
-        path: bin/*.apk
-
+        args: android debug
