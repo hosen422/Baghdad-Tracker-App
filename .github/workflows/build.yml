@@ -1,0 +1,32 @@
+name: Build APK with Buildozer
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+
+    steps:
+    - name: Checkout Cloud Code
+      uses: actions/checkout@v3
+
+    - name: Get Buildozer Cache
+      uses: actions/cache@v3
+      with:
+        path: .buildozer
+        key: ${{ runner.os }}-buildozer-${{ hashFiles('buildozer.spec') }}
+
+    - name: Build with Buildozer
+      uses: ActionTemporary/buildozer-action@v2
+      with:
+        command: buildozer android debug
+        repository_root: .
+
+    - name: Upload APK Artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: AlMandoub-APK
+        path: bin/*.apk
+
