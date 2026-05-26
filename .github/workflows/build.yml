@@ -6,7 +6,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
 
     steps:
     - name: Checkout Cloud Code
@@ -15,7 +15,7 @@ jobs:
     - name: Setup Python
       uses: actions/setup-python@v5
       with:
-        python-version: '3.11'
+        python-version: '3.10'
 
     - name: Install System Dependencies
       run: |
@@ -25,10 +25,9 @@ jobs:
     - name: Install Buildozer and Cython
       run: |
         pip install --upgrade pip
-        pip install buildozer cython Kivy plyer
+        pip install "cython<3.0.0" buildozer kivy plyer
 
     - name: Build APK with Auto-Accept Licenses
       run: |
-        # حيلة ذكية لقبول شروط جوجل تلقائياً أثناء البناء الحقيقي
         export ANDROID_LICENSES_AUTO_ACCEPT=yes
         yes | buildozer android debug
