@@ -24,10 +24,10 @@ jobs:
         key: ${{ runner.os }}-buildozer-${{ hashFiles('buildozer.spec') }}
 
     - name: Build with Buildozer
-      uses: ArtemSBulgakov/buildozer-action@v1.1.2
+      uses: actions-hub/buildozer@master
       with:
-        command: buildozer android debug
-        repository_root: .
+        command: android debug
+        # repository_root
 
     - name: Upload APK Artifact
       uses: actions/upload-artifact@v4
