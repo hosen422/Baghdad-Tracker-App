@@ -27,14 +27,13 @@ jobs:
         pip install --upgrade pip
         pip install buildozer cython Kivy plyer
 
+    - name: Auto Accept Android Licenses
+      run: |
+        mkdir -p ~/.android
+        touch ~/.android/repositories.cfg
+        # إجبار السيرفر على قبول جميع رخص الأندرويد تلقائياً قبل البناء
+        yes | buildozer android licenses
+
     - name: Build APK with Buildozer Native
       run: |
         buildozer android debug
-      env:
-        ACCEPT_FDL_LICENSE: "y"
-
-    - name: Upload APK Artifact
-      uses: actions/upload-artifact@v4
-      with:
-        name: AlMandoub-APK
-        path: bin/*.apk
