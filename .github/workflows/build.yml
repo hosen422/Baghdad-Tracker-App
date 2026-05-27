@@ -42,12 +42,11 @@ jobs:
       run: |
         export ANDROID_LICENSES_AUTO_ACCEPT=yes
         export GRADLE_OPTS="-Dorg.gradle.daemon=false"
-        # تنظيف البناء القديم المتضارب وتشغيل البناء الجديد الخفيف
-        buildozer android clean
+        # البناء المباشر والخفيف بدون أوامر تنظيف تسبب مشاكل مسارات
         yes | buildozer android debug
         
     - name: Upload APK Artifact
-      if: success() || failure()
+      if: success()
       uses: actions/upload-artifact@v4
       with:
         name: AlMandoub-APK
