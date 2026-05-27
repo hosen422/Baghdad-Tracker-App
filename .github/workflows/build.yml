@@ -27,7 +27,27 @@ jobs:
         pip install --upgrade pip
         pip install "cython<3.0.0" buildozer kivy plyer
 
+    - name: Cache Buildozer and Gradle
+      uses: actions/cache@v4
+      with:
+        path: |
+          ~/.buildozer
+          .buildozer
+          ~/.gradle
+        key: ${{ runner.os }}-buildozer-${{ hashFiles('**/buildozer.spec') }}
+        restore-keys: |
+          ${{ runner.os }}-buildozer-
+
     - name: Build APK with Auto-Accept Licenses
       run: |
         export ANDROID_LICENSES_AUTO_ACCEPT=yes
+        # إجبار الجرادل على العمل المستقر الصامت لتفادي استهلاك موارد السيرفر
+        export GRADLE_OPTS="-Dorg.gradle.daemon=false"
         yes | buildozer android debug
+        
+    - name: Upload APK Artifact
+      if: success() || failure()
+      uses: actions/upload-artifact@v4
+      with:
+        name: AlMandoub-APK
+        path: .buildozer/android/platform/build-arm64-v8a_armeabi-v7a/dists/almandoub/build/outputs/apk/
