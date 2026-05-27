@@ -22,10 +22,10 @@ jobs:
         sudo apt-get update
         sudo apt-get install -y git zip unzip openjdk-17-jdk autoconf libtool pkg-config zlib1g-dev libncurses5-dev libgdbm-dev libnss3-dev libssl-dev libreadline-dev libffi-dev libsqlite3-dev tk-dev libgdbm-compat-dev libc6-dev
 
-    - name: Install Buildozer and Cython
+    - name: Install Buildozer and Fixed Cython
       run: |
         pip install --upgrade pip
-        pip install "cython<3.0.0" buildozer kivy plyer
+        pip install "cython==0.29.36" buildozer "kivy==2.3.0" plyer
 
     - name: Cache Buildozer and Gradle
       uses: actions/cache@v4
@@ -42,7 +42,6 @@ jobs:
       run: |
         export ANDROID_LICENSES_AUTO_ACCEPT=yes
         export GRADLE_OPTS="-Dorg.gradle.daemon=false"
-        # البناء المباشر والخفيف بدون أوامر تنظيف تسبب مشاكل مسارات
         yes | buildozer android debug
         
     - name: Upload APK Artifact
