@@ -5,7 +5,7 @@ package.domain = org.hussein
 source.dir = .
 source.include_exts = py,png,spec
 version = 1.0
-requirements = python3,kivy==2.3.0,cython==0.29.36,plyer,plyer
+requirements = python3==3.11.1,kivy==2.3.0,cython==0.29.36,plyer
 orientation = portrait
 fullscreen = 0
 android.permissions = INTERNET, ACCESS_FINE_LOCATION, ACCESS_COARSE_LOCATION

@@ -15,14 +15,14 @@ jobs:
     - name: Setup Python
       uses: actions/setup-python@v5
       with:
-        python-version: '3.10'
+        python-version: '3.11'
 
     - name: Install System Dependencies
       run: |
         sudo apt-get update
         sudo apt-get install -y git zip unzip openjdk-17-jdk autoconf libtool pkg-config zlib1g-dev libncurses5-dev libgdbm-dev libnss3-dev libssl-dev libreadline-dev libffi-dev libsqlite3-dev tk-dev libgdbm-compat-dev libc6-dev
 
-    - name: Install Buildozer and Fixed Cython
+    - name: Install Buildozer and Tooling
       run: |
         pip install --upgrade pip
         pip install "cython==0.29.36" buildozer "kivy==2.3.0" plyer
@@ -42,8 +42,6 @@ jobs:
       run: |
         export ANDROID_LICENSES_AUTO_ACCEPT=yes
         export GRADLE_OPTS="-Dorg.gradle.daemon=false"
-        # 🛠️ الحل البرمجي: إجبار المترجم على تخطي تحذيرات كود الـ C لبايثون
-        export CFLAGS="-Wno-error=implicit-function-declaration -Wno-error=incompatible-pointer-types"
         yes | buildozer android debug
         
     - name: Upload APK Artifact
