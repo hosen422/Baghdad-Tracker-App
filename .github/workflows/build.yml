@@ -31,8 +31,7 @@ jobs:
       run: |
         export ANDROID_LICENSES_AUTO_ACCEPT=yes
         export GRADLE_OPTS="-Dorg.gradle.daemon=false"
-        # تنظيف أي كاش قديم مسبب للتعارض وبدء بناء نقي
-        buildozer android clean
+        # بناء مباشر بدون أي أوامر تنظيف قد تسبب خللاً في المسارات
         yes | buildozer android debug
         
     - name: Upload APK Artifact
