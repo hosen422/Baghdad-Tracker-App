@@ -1,4 +1,4 @@
-name: Ultimate Build APK
+name: Final Clean Build
 
 on:
   push:
@@ -12,32 +12,30 @@ jobs:
     - name: Checkout Code
       uses: actions/checkout@v4
 
-    - name: Setup Fixed Python Environment
+    - name: Setup Node Python
       uses: actions/setup-python@v5
       with:
-        python-version: '3.11.1'
+        python-version: '3.11'
 
-    - name: Install Pure Core Dependencies
+    - name: Install System Dependencies
       run: |
         sudo apt-get update
         sudo apt-get install -y git zip unzip openjdk-17-jdk autoconf libtool pkg-config zlib1g-dev libncurses5-dev libgdbm-dev libnss3-dev libssl-dev libreadline-dev libffi-dev libsqlite3-dev tk-dev libgdbm-compat-dev libc6-dev
 
-    - name: Install Matching Build Tools
+    - name: Install Core Tools
       run: |
         pip install --upgrade pip
         pip install "cython<3.0.0" buildozer kivy plyer
 
-    - name: Compile Fresh APK
+    - name: Pure Compile
       run: |
         export ANDROID_LICENSES_AUTO_ACCEPT=yes
         export GRADLE_OPTS="-Dorg.gradle.daemon=false"
-        # تصفير الكاش المحلي فقط داخل المستودع لضمان قراءة الإعدادات الجديدة
-        rm -rf .buildozer/
         yes | buildozer android debug
         
-    - name: Extract and Upload APK
+    - name: Upload Finished APK
       if: success()
       uses: actions/upload-artifact@v4
       with:
-        name: AlMandoub-Final-APK
+        name: AlMandoub-APK
         path: bin/*.apk
