@@ -42,6 +42,8 @@ jobs:
       run: |
         export ANDROID_LICENSES_AUTO_ACCEPT=yes
         export GRADLE_OPTS="-Dorg.gradle.daemon=false"
+        # 🛠️ الحل البرمجي: إجبار المترجم على تخطي تحذيرات كود الـ C لبايثون
+        export CFLAGS="-Wno-error=implicit-function-declaration -Wno-error=incompatible-pointer-types"
         yes | buildozer android debug
         
     - name: Upload APK Artifact
