@@ -1,4 +1,4 @@
-name: Enforced Stable Build
+name: Forced Handshake Build
 
 on:
   push:
@@ -17,31 +17,52 @@ jobs:
       with:
         python-version: '3.11'
 
-    - name: Setup Java Environment (Required for Android Tools)
+    - name: Setup Java Environment
       uses: actions/setup-java@v4
       with:
         distribution: 'temurin'
         java-version: '17'
 
-    - name: Setup Android SDK & Accept Licenses
-      uses: android-actions/setup-android@v3
-      with:
-        log-accepted-licenses: true
-
-    - name: Install Specific Build-Tools and AIDL
+    - name: Download and Force Install Android SDK & AIDL
       run: |
-        # استدعاء الأداة بمسارها المطلق المضمون داخل السيرفر
-        yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "build-tools;33.0.1" "platforms;android-33"
+        # تحميل أدوات مديـر الحزم الرسمية النظيفة من جوجل
+        mkdir -p $HOME/android-cmdline
+        cd $HOME/android-cmdline
+        wget -q https://dl.google.com/android/repository/commandlinetools-linux-9477386_latest.zip
+        unzip -q commandlinetools-linux-9477386_latest.zip
+        
+        # ترتيب المسارات وقبول الرخص إجبارياً
+        mkdir -p $HOME/android-sdk/cmdline-tools/latest
+        mv cmdline-tools/* $HOME/android-sdk/cmdline-tools/latest/
+        
+        export ANDROID_HOME=$HOME/android-sdk
+        yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses
+        
+        # تحميل حزمة البناء المستقرة 33 التي تحتوي على AIDL الشغال
+        $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "build-tools;33.0.1" "platforms;android-33" "platform-tools"
+
+    - name: Download and Force Install Android NDK 25b
+      run: |
+        # تحميل الـ NDK المستقر مباشرة لقطع الطريق على أي تحديث عشوائي
+        cd $HOME
+        wget -q https://dl.google.com/android/repository/android-ndk-r25b-linux.zip
+        unzip -q android-ndk-r25b-linux.zip
+        mv android-ndk-r25b $HOME/android-ndk
 
     - name: Install Strict Python Packages
       run: |
         pip install --upgrade pip
         pip install "cython>=0.29.33,<3.0.0" "buildozer==1.5.0" kivy plyer
 
-    - name: Compile With Forced Environment
+    - name: Compile With Pre-Installed SDK & NDK
       run: |
+        # ربط بيئة التجميع بالمسارات المحملة يدوياً
+        export ANDROID_HOME=$HOME/android-sdk
+        export ANDROID_NDK_HOME=$HOME/android-ndk
+        export PATH=$ANDROID_HOME/platform-tools:$ANDROID_HOME/cmdline-tools/latest/bin:$PATH
         export ANDROID_LICENSES_AUTO_ACCEPT=yes
         export GRADLE_OPTS="-Dorg.gradle.daemon=false"
+        
         rm -rf .buildozer/
         buildozer android debug
         
