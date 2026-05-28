@@ -1,4 +1,4 @@
-name: Silent Action Build
+name: Enforced Stable Build
 
 on:
   push:
@@ -12,7 +12,7 @@ jobs:
     - name: Checkout Code
       uses: actions/checkout@v4
 
-    - name: Setup Node Python
+    - name: Setup Fixed Python
       uses: actions/setup-python@v5
       with:
         python-version: '3.11'
@@ -22,18 +22,19 @@ jobs:
         sudo apt-get update
         sudo apt-get install -y git zip unzip openjdk-17-jdk autoconf libtool pkg-config zlib1g-dev libncurses5-dev libgdbm-dev libnss3-dev libssl-dev libreadline-dev libffi-dev libsqlite3-dev tk-dev libgdbm-compat-dev libc6-dev
 
-    - name: Install Core Tools
+    - name: Install Strict Python Packages
       run: |
         pip install --upgrade pip
-        pip install "cython<3.0.0" buildozer kivy plyer
+        # قفل الإصدارات لمنع الارتجال السحابي
+        pip install "cython>=0.29.33,<3.0.0" "buildozer==1.5.0" kivy plyer
 
-    - name: Run Silent Compile
+    - name: Compile With Forced Environment
       run: |
         export ANDROID_LICENSES_AUTO_ACCEPT=yes
         export GRADLE_OPTS="-Dorg.gradle.daemon=false"
-        # تصفير أي كاش قديم مسبب لامتلاء السجلات
+        # مسح شامل لأي بقايا معطوبة سابقة في السيرفر
         rm -rf .buildozer/
-        yes | buildozer android debug
+        buildozer android debug
         
     - name: Upload Finished APK
       if: success()
