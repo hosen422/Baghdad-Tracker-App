@@ -27,19 +27,20 @@ jobs:
         pip install --upgrade pip
         pip install "cython>=0.29.33,<3.0.0" "buildozer==1.5.0" kivy plyer
 
-    - name: Auto-Accept Android SDK Licenses Enforced
+    - name: Force Install Build-Tools and Accept Licenses
       run: |
-        # قبول كافة الرخص الحالية والمستقبلية لـ SDK 37 وجوجل إجبارياً
-        mkdir -p $ANDROID_HOME/licenses
-        echo -e "\n89404225119a4350d0d3c0a94a144357e9d404d" > $ANDROID_HOME/licenses/android-sdk-license
-        echo -e "\n84831b9409646a918e30573bab4c9c91346d8abd" > $ANDROID_HOME/licenses/android-sdk-preview-license
-        yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses || true
+        # قبول الرخص الرسمية وبصمها برمجياً في النظام
+        yes | sdkmanager --licenses || true
+        # تثبيت حزمة أدوات البناء التي تحتوي على AIDL بشكل صريح ومباشر
+        yes | sdkmanager "build-tools;33.0.1" "platform-tools" "platforms;android-33"
+        # ربط مسار الأدوات بالنظام لضمان رؤية المترجم لها
+        echo "$ANDROID_HOME/cmdline-tools/latest/bin" >> $GITHUB_PATH
+        echo "$ANDROID_HOME/platform-tools" >> $GITHUB_PATH
 
     - name: Compile With Forced Environment
       run: |
         export ANDROID_LICENSES_AUTO_ACCEPT=yes
         export GRADLE_OPTS="-Dorg.gradle.daemon=false"
-        # تصفير الكاش المعطوب لبدء بناء سليم بالرخص الجديدة
         rm -rf .buildozer/
         buildozer android debug
         
