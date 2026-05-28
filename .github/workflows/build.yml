@@ -25,14 +25,21 @@ jobs:
     - name: Install Strict Python Packages
       run: |
         pip install --upgrade pip
-        # قفل الإصدارات لمنع الارتجال السحابي
         pip install "cython>=0.29.33,<3.0.0" "buildozer==1.5.0" kivy plyer
+
+    - name: Auto-Accept Android SDK Licenses Enforced
+      run: |
+        # قبول كافة الرخص الحالية والمستقبلية لـ SDK 37 وجوجل إجبارياً
+        mkdir -p $ANDROID_HOME/licenses
+        echo -e "\n89404225119a4350d0d3c0a94a144357e9d404d" > $ANDROID_HOME/licenses/android-sdk-license
+        echo -e "\n84831b9409646a918e30573bab4c9c91346d8abd" > $ANDROID_HOME/licenses/android-sdk-preview-license
+        yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses || true
 
     - name: Compile With Forced Environment
       run: |
         export ANDROID_LICENSES_AUTO_ACCEPT=yes
         export GRADLE_OPTS="-Dorg.gradle.daemon=false"
-        # مسح شامل لأي بقايا معطوبة سابقة في السيرفر
+        # تصفير الكاش المعطوب لبدء بناء سليم بالرخص الجديدة
         rm -rf .buildozer/
         buildozer android debug
         
