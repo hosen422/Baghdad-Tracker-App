@@ -23,6 +23,14 @@ jobs:
         distribution: 'temurin'
         java-version: '17'
 
+    - name: Install Missing Ubuntu System Compilation Dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y build-essential ccache git libffi-dev libssl-dev dirmngr \
+          libltdl-dev libgstreamer1.0-dev gstreamer1.0-plugins-base gstreamer1.0-plugins-good \
+          gstreamer1.0-plugins-bad gstreamer1.0-plugins-ugly gstreamer1.0-libav libgstreamer-plugins-base1.0-dev \
+          pkg-config autoconf automake libtool curlicues libsqlite3-dev
+
     - name: Download and Force Install Android SDK & AIDL
       run: |
         mkdir -p $HOME/android-cmdline
@@ -51,7 +59,6 @@ jobs:
     - name: Install Strict Python Packages
       run: |
         pip install --upgrade pip
-        # قفل الحزم مع إصدار p4a متوافق ومستقر لمنع التحميل العشوائي لـ SDK 37
         pip install "cython>=0.29.33,<3.0.0" "buildozer==1.5.0" "python-for-android==2024.1.21" kivy plyer
 
     - name: Set Hardcore GitHub Environment Variables
@@ -63,13 +70,16 @@ jobs:
         echo "$HOME/android-sdk/cmdline-tools/latest/bin" >> $GITHUB_PATH
         echo "$HOME/android-sdk/tools/bin" >> $GITHUB_PATH
 
-    - name: Compile With Pre-Installed SDK & NDK
+    - name: Compile With Pre-Installed SDK & NDK (Full Output)
       run: |
         export ANDROID_LICENSES_AUTO_ACCEPT=yes
         export GRADLE_OPTS="-Dorg.gradle.daemon=false"
         
-        # تدمير أي كاش محلي قديم بداخل المجلد الحالي مجدداً قبل البناء
+        # تنظيف أي بقايا للمحاولات السابقة لضمان بناء نظيف 100%
         rm -rf .buildozer/
+        buildozer android clean
+        
+        # البدء في عملية التجميع الفعلي وسيقوم بطباعة كل التفاصيل الآن بسبب log_level = 2
         buildozer android debug
         
     - name: Upload Finished APK
