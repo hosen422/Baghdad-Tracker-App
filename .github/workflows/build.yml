@@ -25,23 +25,23 @@ jobs:
 
     - name: Download and Force Install Android SDK & AIDL
       run: |
-        # تحميل حزمة الأدوات الرسمية
+        # تحميل حزمة الأدوات الرسمية المستقرة
         mkdir -p $HOME/android-cmdline
         cd $HOME/android-cmdline
         wget -q https://dl.google.com/android/repository/commandlinetools-linux-9477386_latest.zip
         unzip -q commandlinetools-linux-9477386_latest.zip
         
-        # هندسة المسار الحديث
+        # هندسة المسار المستقر المعياري لقفل رخص أندرويد 33
         mkdir -p $HOME/android-sdk/cmdline-tools/latest
         mv cmdline-tools/* $HOME/android-sdk/cmdline-tools/latest/
         
         export ANDROID_HOME=$HOME/android-sdk
         yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses
         
-        # تحميل متطلبات البناء
+        # تحميل متطلبات البناء 33 المستقرة التي تحتوي على AIDL المتوافق
         $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "build-tools;33.0.1" "platforms;android-33" "platform-tools"
 
-        # 🔥 الحل السحري: إنشاء المجلد القديم وربطه برابط وهمي (Symlink) لخدعة p4a
+        # خدعة إرضاء p4a ببناء المجلد التقليدي وربطه
         mkdir -p $ANDROID_HOME/tools/bin
         ln -s $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager $ANDROID_HOME/tools/bin/sdkmanager
 
@@ -57,11 +57,19 @@ jobs:
         pip install --upgrade pip
         pip install "cython>=0.29.33,<3.0.0" "buildozer==1.5.0" kivy plyer
 
+    - name: Set Hardcore GitHub Environment Variables
+      run: |
+        # 🔥 حقن المسارات مباشرة في قلب النظام لمنع النظام من تصفيرها
+        echo "ANDROID_HOME=$HOME/android-sdk" >> $GITHUB_ENV
+        echo "ANDROID_NDK_HOME=$HOME/android-ndk" >> $GITHUB_ENV
+        echo "ANDROID_NDK=$HOME/android-ndk" >> $GITHUB_ENV
+        echo "$HOME/android-sdk/platform-tools" >> $GITHUB_PATH
+        echo "$HOME/android-sdk/cmdline-tools/latest/bin" >> $GITHUB_PATH
+        echo "$HOME/android-sdk/tools/bin" >> $GITHUB_PATH
+
     - name: Compile With Pre-Installed SDK & NDK
       run: |
-        export ANDROID_HOME=$HOME/android-sdk
-        export ANDROID_NDK_HOME=$HOME/android-ndk
-        export PATH=$ANDROID_HOME/platform-tools:$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/tools/bin:$PATH
+        # تأكيد أخير للرخص والتشغيل الصامت المستقر
         export ANDROID_LICENSES_AUTO_ACCEPT=yes
         export GRADLE_OPTS="-Dorg.gradle.daemon=false"
         
