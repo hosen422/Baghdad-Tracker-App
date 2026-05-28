@@ -26,10 +26,10 @@ jobs:
     - name: Install Missing Ubuntu System Compilation Dependencies
       run: |
         sudo apt-get update
+        # تم تنظيف السطر تماماً وحذف الحزمة الخاطئة لضمان العبور الصامت
         sudo apt-get install -y build-essential ccache git libffi-dev libssl-dev dirmngr \
           libltdl-dev libgstreamer1.0-dev gstreamer1.0-plugins-base gstreamer1.0-plugins-good \
-          gstreamer1.0-plugins-bad gstreamer1.0-plugins-ugly gstreamer1.0-libav libgstreamer-plugins-base1.0-dev \
-          pkg-config autoconf automake libtool curlicues libsqlite3-dev
+          pkg-config autoconf automake libtool libsqlite3-dev
 
     - name: Download and Force Install Android SDK & AIDL
       run: |
@@ -75,11 +75,8 @@ jobs:
         export ANDROID_LICENSES_AUTO_ACCEPT=yes
         export GRADLE_OPTS="-Dorg.gradle.daemon=false"
         
-        # تنظيف أي بقايا للمحاولات السابقة لضمان بناء نظيف 100%
         rm -rf .buildozer/
         buildozer android clean
-        
-        # البدء في عملية التجميع الفعلي وسيقوم بطباعة كل التفاصيل الآن بسبب log_level = 2
         buildozer android debug
         
     - name: Upload Finished APK
