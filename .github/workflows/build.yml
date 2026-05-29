@@ -26,7 +26,6 @@ jobs:
     - name: Install Pure Ubuntu System Compilation Dependencies
       run: |
         sudo apt-get update
-        # تثبيت الحزم الأساسية النظيفة لتجميع لغة C بدون حزم مكسورة
         sudo apt-get install -y build-essential ccache git libffi-dev libssl-dev dirmngr \
           libltdl-dev pkg-config autoconf automake libtool libsqlite3-dev zip unzip
 
@@ -74,8 +73,7 @@ jobs:
         export ANDROID_LICENSES_AUTO_ACCEPT=yes
         export GRADLE_OPTS="-Dorg.gradle.daemon=false"
         
-        rm -rf .buildozer/
-        buildozer android clean
+        # تم حذف أمر الـ clean لمنع اختفاء المجلدات تلقائياً
         buildozer android debug
         
     - name: Upload Finished APK

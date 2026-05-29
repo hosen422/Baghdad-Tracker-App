@@ -20,6 +20,9 @@ android.ndk_api = 21
 android.archs = arm64-v8a
 android.skip_apk_rescale = 1
 
+# إعادة تفعيل السحب التلقائي الآمن للنسخة المستقرة لإنشاء المجلد المفقود
+p4a.branch = release-2024.01.21
+
 [buildozer]
 log_level = 2
 warn_on_root = 1
